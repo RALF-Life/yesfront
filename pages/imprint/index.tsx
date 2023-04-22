@@ -1,18 +1,20 @@
 export default function imprint() {
     return (
-        <div className="font-inter text-[20px] text-website-50">
+        <div className="font-inter text-[20px] text-footer-color">
             <div className="ml-24 mr-24 sm:ml-8 mr-8">
                 <p className="text-website-50 mt-20">Please don&apos;t sue us</p>
                 <p className="text-[48px] text-white font-bold">Imprint
                 </p>
-                <div className="text-website-50">
+                <div className="text-footer-color">
                     <p>Luca Hackl</p>
                     <p>Am Alten Güterbahnhof 11</p>
                     <p>76646 Bruchsal</p><br/>
-                    <button className="rounded-md  border-2 border-[#525252] text-[#EFEFEF] p-10 p-10 p-3 p-3 font-semibold text-[15px]">
+                    <button
+                        className="rounded-md  border-2 border-[#525252] text-[#EFEFEF] p-10 p-10 p-3 p-3 font-semibold text-[15px]">
                         <a href="mailto:steckplatz.vier09@icloud.com">Send E-Mail</a>
                     </button>
-                </div><br/>
+                </div>
+                <br/>
                 <p><strong>Haftung für Inhalte</strong></p>
                 <p>Als Diensteanbieter bin ich gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den
                     allgemeinen
