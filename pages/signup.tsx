@@ -15,7 +15,6 @@ export default function Signup() {
                 <div className="flex space-x-6 items-center">
                     <Link href="/imprint" className="text-footer-color font-semibold">Imprint</Link>
                     <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
-                    <Link href="/contact" className="text-footer-color font-semibold">Contact</Link>
                 </div>
                 <div className="ml-auto flex items-center mr-10">
                     <Link href="/" className="bg-white rounded-lg px-5 py-1 font-semibold text-center">Login</Link>

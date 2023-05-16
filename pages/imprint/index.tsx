@@ -1,6 +1,20 @@
+import Link from "next/link";
+
 export default function imprint() {
     return (
         <div className="font-inter text-[20px] text-footer-color">
+
+            <div id="top-navigation" className="ml-5 mt-3 flex items-center">
+                <p id="logo"
+                   className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">RALF</p>
+                <div className="flex space-x-6 items-center">
+                    <Link href="/imprint" className="text-footer-color font-semibold">Imprint</Link>
+                    <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
+                </div>
+                <div className="ml-auto flex items-center mr-10">
+                    <Link href="/" className="bg-white rounded-lg px-5 py-1 font-semibold text-center">Login</Link>
+                </div>
+            </div>
             <div className="ml-24 mr-24 sm:ml-8 mr-8">
                 <p className="text-website-50 mt-20">Please don&apos;t sue us</p>
                 <p className="text-[48px] text-white font-bold">Imprint

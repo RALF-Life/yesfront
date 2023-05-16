@@ -27,7 +27,6 @@ module.exports = {
                 'RALF-gradient-start': '#7CFFA1',
                 'RALF-gradient-end': '#54C1FF',
                 'footer-color': '#898989',
-                'text-website-50': '#848484'
             }
         },
     },
