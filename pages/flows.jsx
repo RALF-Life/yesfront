@@ -6,11 +6,48 @@ import Editor, {DiffEditor, useMonaco, loader} from '@monaco-editor/react';
 
 export default function Flows() {
     const [input, setInput] = React.useState("//Your YAML Code");
+    const [showExtraButtons, setShowExtraButtons] = React.useState(false);
+    const [showFilters, setShowFilters] = React.useState(true);
+    const [showFinalButtons, setShowFinalButtons] = React.useState(false);
 
     const editorRef = React.useRef(null);
 
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = editor;
+    }
+
+    function handleExtraButtonClick(value) {
+        setInput(prevInput => prevInput.replace('$1', value));
+        setShowExtraButtons(false);
+        setShowFinalButtons(true);
+    }
+
+    function handleFilterOutClick() {
+        setInput(prevInput => prevInput + "\n" + "if: '$1' \nthen: '$2'");
+        setShowExtraButtons(true);
+        setShowFilters(false);
+    }
+
+    function handleFilterInClick() {
+        setInput(prevInput => prevInput + "\n" + "if: '$1' \nthen: '$2'");
+        setShowExtraButtons(true);
+        setShowFilters(false);
+    }
+
+    function handleRegexReplaceClick() {
+        setInput(prevInput => prevInput + "\n" + "if: '$1' \nthen: '$2'");
+        setShowExtraButtons(true);
+        setShowFilters(false);
+    }
+
+    function handleFinalButtonClick(value) {
+        if (value === 'if') {
+            setInput(prevInput => prevInput.replace('$2', '\n  - if: \'$1\' \n    then: \'$2\''));
+        } else if (value === 'finished') {
+            setInput(prevInput => prevInput.replace('$2', '\ndo: filters/filter-out/filters/filter-in/actions/regex-replace'));
+            setShowFinalButtons(false);
+            setShowFilters(true);
+        }
     }
 
     React.useEffect(() => {
@@ -50,7 +87,7 @@ export default function Flows() {
                             </button>
                         </div>
                         <Editor
-                            height="80vh"
+                            height="70vh"
                             theme="vs-dark"
                             defaultValue={input}
                             onChange={setInput}
@@ -66,23 +103,47 @@ export default function Flows() {
                                 className="absolute top-1/2 w-full border-t-2 border-dotted border-white opacity-70"></div>
                             <p className="font-bold text-white z-10 bg-[#0B0B0B] px-2">Action</p>
                         </div>
-                        <div className="flex justify-around w-full mt-3">
+                        {showFilters && <div className="flex justify-around w-full mt-3">
                             <div className="w-1/2 mb-3 h-20 rounded-lg border-2 m-3 mt-3"
-                                 onClick={() => setInput(prevInput => prevInput + "\n" + "if: '$1' \nthen: \n  - do: filters/filter-out")}>
+                                 onClick={handleFilterOutClick}>
                                 <p className="font-extrabold ml-3 mt-3">FILTER OUT</p>
                                 <p className="ml-3">Filters an Event out</p>
                             </div>
                             <div className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3 mb-3"
-                                 onClick={() => setInput(prevInput => prevInput + "\n" + "test")}>
+                                 onClick={handleFilterInClick}>
                                 <p className="font-extrabold ml-3 mt-3">FILTER IN</p>
                                 <p className="ml-3">Filters an Event in</p>
                             </div>
-                        </div>
-                        <div className="w-full h-20 rounded-lg border-2 mt-3 mb-3"
-                             onClick={() => setInput(prevInput => prevInput + "\n" + "test")}>
+                        </div>}
+                        {showFilters && <div className="w-full h-20 rounded-lg border-2 mt-3 mb-3"
+                                             onClick={handleRegexReplaceClick}>
                             <p className="font-extrabold ml-3 mt-3">REGEX REPLACE</p>
                             <p className="ml-3">Replaces Text in an Event</p>
-                        </div>
+                        </div>}
+                        {showExtraButtons && <div className="flex justify-around w-full mt-3">
+                            <button className="w-1/2 mb-3 h-20 rounded-lg border-2 m-3 mt-3"
+                                    onClick={() => handleExtraButtonClick('Lorem')}>
+                                Lorem
+                            </button>
+                            <button className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3 mb-3"
+                                    onClick={() => handleExtraButtonClick('Ipsum')}>
+                                Ipsum
+                            </button>
+                            <button className="w-full h-20 rounded-lg border-2 mt-3 mb-3"
+                                    onClick={() => handleExtraButtonClick('Dolor')}>
+                                Dolor
+                            </button>
+                        </div>}
+                        {showFinalButtons && <div className="flex justify-around w-full mt-3">
+                            <button className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3"
+                                    onClick={() => handleFinalButtonClick('if')}>
+                                if
+                            </button>
+                            <button className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3"
+                                    onClick={() => handleFinalButtonClick('finished')}>
+                                finished
+                            </button>
+                        </div>}
                     </div>
                 </div>
             </div>
