@@ -1,62 +1,36 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import React from 'react';
-import Editor, {DiffEditor, useMonaco, loader} from '@monaco-editor/react';
-
+import React, {useState, useEffect} from 'react';
 
 export default function Flows() {
-    const [input, setInput] = React.useState("//Your YAML Code");
-    const [showExtraButtons, setShowExtraButtons] = React.useState(false);
-    const [showFilters, setShowFilters] = React.useState(true);
-    const [showFinalButtons, setShowFinalButtons] = React.useState(false);
+    // JSON data
+    const [jsonData, setJsonData] = useState(null);
 
-    const editorRef = React.useRef(null);
+    // Selected options
+    const [selectedOptions, setSelectedOptions] = useState([{option: '', subOption: ''}]);
 
-    function handleEditorDidMount(editor, monaco) {
-        editorRef.current = editor;
-    }
+    // Get JSON data on component mount
+    useEffect(() => {
+        fetch('/spec.json')
+            .then((response) => response.json())
+            .then((data) => setJsonData(data))
+            .catch((error) => console.error('Error:', error));
+    }, []);
 
-    function handleExtraButtonClick(value) {
-        setInput(prevInput => prevInput.replace('$1', value));
-        setShowExtraButtons(false);
-        setShowFinalButtons(true);
-    }
-
-    function handleFilterOutClick() {
-        setInput(prevInput => prevInput + "\n" + "if: '$1' \nthen: '$2'");
-        setShowExtraButtons(true);
-        setShowFilters(false);
-    }
-
-    function handleFilterInClick() {
-        setInput(prevInput => prevInput + "\n" + "if: '$1' \nthen: '$2'");
-        setShowExtraButtons(true);
-        setShowFilters(false);
-    }
-
-    function handleRegexReplaceClick() {
-        setInput(prevInput => prevInput + "\n" + "if: '$1' \nthen: '$2'");
-        setShowExtraButtons(true);
-        setShowFilters(false);
-    }
-
-    function handleFinalButtonClick(value) {
-        if (value === 'if') {
-            setInput(prevInput => prevInput.replace('$2', '\n  - if: \'$1\' \n    then: \'$2\''));
-        } else if (value === 'finished') {
-            setInput(prevInput => prevInput.replace('$2', '\ndo: filters/filter-out/filters/filter-in/actions/regex-replace'));
-            setShowFinalButtons(false);
-            setShowFilters(true);
+    const handleOptionChange = (index, level, value) => {
+        const optionsCopy = [...selectedOptions];
+        if (level === 1) {
+            optionsCopy[index].option = value;
+            optionsCopy[index].subOption = '';  // Reset sub option whenever main option changes
+        } else if (level === 2) {
+            optionsCopy[index].subOption = value;
         }
-    }
+        setSelectedOptions(optionsCopy);
+    };
 
-    React.useEffect(() => {
-        if (editorRef.current) {
-            const state = editorRef.current.saveViewState();
-            editorRef.current.setValue(input);
-            editorRef.current.restoreViewState(state);
-        }
-    }, [input]);
+    const handleAddIf = () => {
+        setSelectedOptions([...selectedOptions, {option: '', subOption: ''}]);
+    };
 
     return (
         <div className="h-screen">
@@ -65,6 +39,7 @@ export default function Flows() {
                 <meta name="description" content="RALF Flow creation"/>
                 <link rel="icon" href="/favicon.ico"/>
             </Head>
+
             <div id="top-navigation" className="ml-5 mt-3 flex items-center">
                 <p id="logo"
                    className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">RALF</p>
@@ -86,68 +61,42 @@ export default function Flows() {
                             <button className=" text-black font-semibold px-4 py-2 rounded-lg bg-[#50FFD5] h-10">Save
                             </button>
                         </div>
-                        <Editor
-                            height="70vh"
-                            theme="vs-dark"
-                            defaultValue={input}
-                            onChange={setInput}
-                            onMount={handleEditorDidMount}
-                            saveViewState
-                        />
-                    </div>
-
-                    <div id="inside-catalogue"
-                         className="w-2/5 h-1/2 m-auto bg-[#0B0B0B] flex flex-col justify-start items-center border-[#404040] rounded-lg border-2 p-6">
-                        <div className="relative w-full flex justify-start mt-3">
-                            <div
-                                className="absolute top-1/2 w-full border-t-2 border-dotted border-white opacity-70"></div>
-                            <p className="font-bold text-white z-10 bg-[#0B0B0B] px-2">Action</p>
+                        <div className="flex justify-between">
+                            <div className="space-y-4">
+                                {selectedOptions.map((selectedOption, index) => (
+                                    <div key={index} className="flex items-center space-x-4">
+                                        <div>if:</div>
+                                        {jsonData &&
+                                            <select style={{color: 'black'}} value={selectedOption.option}
+                                                    onChange={event => handleOptionChange(index, 1, event.target.value)}>
+                                                <option value="">Select an option...</option>
+                                                {Object.keys(jsonData.$if).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                        {jsonData && selectedOption.option &&
+                                            <select style={{color: 'black'}} value={selectedOption.subOption}
+                                                    onChange={event => handleOptionChange(index, 2, event.target.value)}>
+                                                <option value="">Select an option...</option>
+                                                {Object.keys(jsonData.$if[selectedOption.option]).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                    </div>
+                                ))}
+                            </div>
+                            <button
+                                style={{backgroundColor: 'black', borderRadius: '50%', color: 'white', padding: '10px'}}
+                                onClick={handleAddIf}>+
+                            </button>
                         </div>
-                        {showFilters && <div className="flex justify-around w-full mt-3">
-                            <div className="w-1/2 mb-3 h-20 rounded-lg border-2 m-3 mt-3"
-                                 onClick={handleFilterOutClick}>
-                                <p className="font-extrabold ml-3 mt-3">FILTER OUT</p>
-                                <p className="ml-3">Filters an Event out</p>
-                            </div>
-                            <div className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3 mb-3"
-                                 onClick={handleFilterInClick}>
-                                <p className="font-extrabold ml-3 mt-3">FILTER IN</p>
-                                <p className="ml-3">Filters an Event in</p>
-                            </div>
-                        </div>}
-                        {showFilters && <div className="w-full h-20 rounded-lg border-2 mt-3 mb-3"
-                                             onClick={handleRegexReplaceClick}>
-                            <p className="font-extrabold ml-3 mt-3">REGEX REPLACE</p>
-                            <p className="ml-3">Replaces Text in an Event</p>
-                        </div>}
-                        {showExtraButtons && <div className="flex justify-around w-full mt-3">
-                            <button className="w-1/2 mb-3 h-20 rounded-lg border-2 m-3 mt-3"
-                                    onClick={() => handleExtraButtonClick('Lorem')}>
-                                Lorem
-                            </button>
-                            <button className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3 mb-3"
-                                    onClick={() => handleExtraButtonClick('Ipsum')}>
-                                Ipsum
-                            </button>
-                            <button className="w-full h-20 rounded-lg border-2 mt-3 mb-3"
-                                    onClick={() => handleExtraButtonClick('Dolor')}>
-                                Dolor
-                            </button>
-                        </div>}
-                        {showFinalButtons && <div className="flex justify-around w-full mt-3">
-                            <button className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3"
-                                    onClick={() => handleFinalButtonClick('if')}>
-                                if
-                            </button>
-                            <button className="w-1/2 h-20 rounded-lg border-2 m-3 mt-3"
-                                    onClick={() => handleFinalButtonClick('finished')}>
-                                finished
-                            </button>
-                        </div>}
+                        <hr style={{borderColor: 'gray'}}/>
+                        <div className="mt-4">then:</div>
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }
