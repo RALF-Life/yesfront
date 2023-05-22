@@ -6,8 +6,23 @@ export default function Flows() {
     // JSON data
     const [jsonData, setJsonData] = useState(null);
 
+    const [ifButtonClicked, setIfButtonClicked] = useState(false);
     // Selected options
     const [selectedOptions, setSelectedOptions] = useState([{option: '', subOption: ''}]);
+    const [blocks, setBlocks] = useState([
+        {
+            ifs: [{option: '', subOption: ''}],
+            thens: [],
+        },
+    ]);
+    // Selected JSON
+    const [selectedJson, setSelectedJson] = useState({$if: {}});
+
+    // Selected Ifs
+    const [selectedIfs, setSelectedIfs] = useState([{option: '', subOption: ''}]);
+
+    // Selected Thens
+    const [selectedThens, setSelectedThens] = useState([{type: 'if', option: '', subOption: ''}]);
 
     // Get JSON data on component mount
     useEffect(() => {
@@ -17,20 +32,54 @@ export default function Flows() {
             .catch((error) => console.error('Error:', error));
     }, []);
 
-    const handleOptionChange = (index, level, value) => {
-        const optionsCopy = [...selectedOptions];
-        if (level === 1) {
-            optionsCopy[index].option = value;
-            optionsCopy[index].subOption = '';  // Reset sub option whenever main option changes
-        } else if (level === 2) {
-            optionsCopy[index].subOption = value;
-        }
-        setSelectedOptions(optionsCopy);
+    const handleIfChange = (blockIndex, ifIndex, level, value) => {
+        const blocksCopy = [...blocks];
+        blocksCopy[blockIndex].ifs[ifIndex][level === 1 ? 'option' : 'subOption'] = value;
+        setBlocks(blocksCopy);
     };
 
-    const handleAddIf = () => {
-        setSelectedOptions([...selectedOptions, {option: '', subOption: ''}]);
+    const handleThenChange = (blockIndex, thenIndex, type, level, value) => {
+        const blocksCopy = [...blocks];
+        if (type === 'action') {
+            blocksCopy[blockIndex].thens[thenIndex].type = type;
+            blocksCopy[blockIndex].thens[thenIndex].option = value;
+        } else if (type === 'if') {
+            blocksCopy[blockIndex].thens[thenIndex][level === 1 ? 'option' : 'subOption'] = value;
+        }
+        setBlocks(blocksCopy);
     };
+
+    const handleAddIf = (blockIndex) => {
+        const blocksCopy = [...blocks];
+        blocksCopy[blockIndex].ifs.push({option: '', subOption: ''});
+        setBlocks(blocksCopy);
+    };
+
+    const handleAddThen = (blockIndex, type) => {
+        const blocksCopy = [...blocks];
+        if (type === 'action') {
+            if (isLastBlock(blockIndex)) {
+                const exists = blocksCopy[blockIndex].thens.some((then) => then.type === 'action');
+                if (!exists) {
+                    blocksCopy[blockIndex].thens.push({type: type, option: '', subOption: ''});
+                    setBlocks(blocksCopy);
+                }
+            }
+        } else {
+            blocksCopy[blockIndex].thens.push({type: type, option: '', subOption: ''});
+            if (isLastBlock(blockIndex)) {
+                setBlocks([...blocksCopy, {
+                    ifs: [],
+                    thens: [],
+                }]);
+            } else {
+                setBlocks(blocksCopy);
+            }
+        }
+    };
+
+    const isLastBlock = (blockIndex) => blockIndex === blocks.length - 1;
+    console.log(selectedJson);
 
     return (
         <div className="h-screen">
@@ -61,42 +110,114 @@ export default function Flows() {
                             <button className=" text-black font-semibold px-4 py-2 rounded-lg bg-[#50FFD5] h-10">Save
                             </button>
                         </div>
-                        <div className="flex justify-between">
-                            <div className="space-y-4">
-                                {selectedOptions.map((selectedOption, index) => (
-                                    <div key={index} className="flex items-center space-x-4">
-                                        <div>if:</div>
-                                        {jsonData &&
-                                            <select style={{color: 'black'}} value={selectedOption.option}
-                                                    onChange={event => handleOptionChange(index, 1, event.target.value)}>
-                                                <option value="">Select an option...</option>
-                                                {Object.keys(jsonData.$if).map(key => (
-                                                    <option key={key} value={key}>{key}</option>
-                                                ))}
-                                            </select>
-                                        }
-                                        {jsonData && selectedOption.option &&
-                                            <select style={{color: 'black'}} value={selectedOption.subOption}
-                                                    onChange={event => handleOptionChange(index, 2, event.target.value)}>
-                                                <option value="">Select an option...</option>
-                                                {Object.keys(jsonData.$if[selectedOption.option]).map(key => (
-                                                    <option key={key} value={key}>{key}</option>
-                                                ))}
-                                            </select>
-                                        }
-                                    </div>
-                                ))}
+                        {blocks.map((block, blockIndex) => (
+                            <div key={blockIndex}>
+                                <div className="space-y-4">
+                                    {block.ifs.map((selectedIf, ifIndex) => (
+                                        <div key={ifIndex} className="flex items-center space-x-4">
+                                            <div>if:</div>
+                                            {jsonData &&
+                                                <select style={{color: 'black'}} value={selectedIf.option}
+                                                        onChange={event => handleIfChange(blockIndex, ifIndex, 1, event.target.value)}>
+                                                    <option value="">Select an option...</option>
+                                                    {Object.keys(jsonData.$if).map(key => (
+                                                        <option key={key} value={key}>{key}</option>
+                                                    ))}
+                                                </select>
+                                            }
+                                            {jsonData && selectedIf.option &&
+                                                <select style={{color: 'black'}} value={selectedIf.subOption}
+                                                        onChange={event => handleIfChange(blockIndex, ifIndex, 2, event.target.value)}>
+                                                    <option value="">Select an option...</option>
+                                                    {Object.keys(jsonData.$if[selectedIf.option]).map(key => (
+                                                        <option key={key} value={key}>{key}</option>
+                                                    ))}
+                                                </select>
+                                            }
+                                        </div>
+                                    ))}
+                                    <button
+                                        style={{
+                                            backgroundColor: 'black',
+                                            borderRadius: '50%',
+                                            color: 'white',
+                                            padding: '10px'
+                                        }}
+                                        onClick={() => handleAddIf(blockIndex)}>+
+                                    </button>
+                                </div>
+                                <hr style={{borderColor: 'gray'}}/>
+                                <div className="mt-4">then:</div>
+                                <div className="space-y-4">
+                                    {block.thens.map((selectedThen, thenIndex) => (
+                                        <div key={thenIndex} className="flex items-center space-x-4">
+                                            {selectedThen.type === 'if' &&
+                                                <div>
+                                                    <div>if:</div>
+                                                    {jsonData &&
+                                                        <select style={{color: 'black'}} value={selectedThen.option}
+                                                                onChange={event => handleThenChange(blockIndex, thenIndex, 'if', 1, event.target.value)}>
+                                                            <option value="">Select an option...</option>
+                                                            {Object.keys(jsonData.$if).map(key => (
+                                                                <option key={key} value={key}>{key}</option>
+                                                            ))}
+                                                        </select>
+                                                    }
+                                                    {jsonData && selectedThen.option &&
+                                                        <select style={{color: 'black'}} value={selectedThen.subOption}
+                                                                onChange={event => handleThenChange(blockIndex, thenIndex, 'if', 2, event.target.value)}>
+                                                            <option value="">Select an option...</option>
+                                                            {Object.keys(jsonData.$if[selectedThen.option]).map(key => (
+                                                                <option key={key} value={key}>{key}</option>
+                                                            ))}
+                                                        </select>
+                                                    }
+                                                </div>
+                                            }
+                                            {selectedThen.type === 'action' &&
+                                                <div>
+                                                    <div>action:</div>
+                                                    {jsonData &&
+                                                        <select style={{color: 'black'}} value={selectedThen.option}
+                                                                onChange={event => handleThenChange(blockIndex, thenIndex, 'action', 1, event.target.value)}>
+                                                            <option value="">Select an action...</option>
+                                                            {Object.keys(jsonData.$actions).map(key => (
+                                                                <option key={key} value={key}>{key}</option>
+                                                            ))}
+                                                        </select>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    ))}
+                                    {isLastBlock(blockIndex) && !block.thens.find(then => then.type === 'action') &&
+                                        <div>
+                                            <button
+                                                style={{
+                                                    backgroundColor: 'black',
+                                                    borderRadius: '50%',
+                                                    color: 'white',
+                                                    padding: '10px'
+                                                }}
+                                                onClick={() => handleAddThen(blockIndex, 'if')}>if +
+                                            </button>
+                                            <button
+                                                style={{
+                                                    backgroundColor: 'black',
+                                                    borderRadius: '50%',
+                                                    color: 'white',
+                                                    padding: '10px'
+                                                }}
+                                                onClick={() => handleAddThen(blockIndex, 'action')}>action +
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
                             </div>
-                            <button
-                                style={{backgroundColor: 'black', borderRadius: '50%', color: 'white', padding: '10px'}}
-                                onClick={handleAddIf}>+
-                            </button>
-                        </div>
-                        <hr style={{borderColor: 'gray'}}/>
-                        <div className="mt-4">then:</div>
+                        ))}
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
