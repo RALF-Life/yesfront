@@ -32,10 +32,31 @@ export default function Flows() {
             .catch((error) => console.error('Error:', error));
     }, []);
 
+    const handleRemoveIf = (blockIndex, ifIndex) => {
+        const blocksCopy = [...blocks];
+        blocksCopy[blockIndex].ifs.splice(ifIndex, 1);
+        setBlocks(blocksCopy);
+    };
+
+    const handleRemoveThen = (blockIndex, thenIndex) => {
+        const blocksCopy = [...blocks];
+        blocksCopy[blockIndex].thens.splice(thenIndex, 1);
+        setBlocks(blocksCopy);
+    };
     const handleIfChange = (blockIndex, ifIndex, level, value) => {
         const blocksCopy = [...blocks];
         blocksCopy[blockIndex].ifs[ifIndex][level === 1 ? 'option' : 'subOption'] = value;
         setBlocks(blocksCopy);
+
+        // Construct nested JSON object
+        let nestedJson = {...selectedJson};
+        let currentOption = blocksCopy[blockIndex].ifs[ifIndex].option;
+        let currentSubOption = blocksCopy[blockIndex].ifs[ifIndex].subOption;
+        if (!nestedJson.$if[currentOption]) {
+            nestedJson.$if[currentOption] = {};
+        }
+        nestedJson.$if[currentOption][currentSubOption] = {};
+        setSelectedJson(nestedJson);
     };
 
     const handleThenChange = (blockIndex, thenIndex, type, level, value) => {
@@ -47,6 +68,23 @@ export default function Flows() {
             blocksCopy[blockIndex].thens[thenIndex][level === 1 ? 'option' : 'subOption'] = value;
         }
         setBlocks(blocksCopy);
+
+        // Construct nested JSON object
+        let nestedJson = {...selectedJson};
+        if (type === 'action') {
+            let currentAction = blocksCopy[blockIndex].thens[thenIndex].option;
+            if (!nestedJson.$actions[currentAction]) {
+                nestedJson.$actions[currentAction] = {};
+            }
+        } else if (type === 'if') {
+            let currentOption = blocksCopy[blockIndex].thens[thenIndex].option;
+            let currentSubOption = blocksCopy[blockIndex].thens[thenIndex].subOption;
+            if (!nestedJson.$if[currentOption]) {
+                nestedJson.$if[currentOption] = {};
+            }
+            nestedJson.$if[currentOption][currentSubOption] = {};
+        }
+        setSelectedJson(nestedJson);
     };
 
     const handleAddIf = (blockIndex) => {
@@ -134,6 +172,7 @@ export default function Flows() {
                                                     ))}
                                                 </select>
                                             }
+                                            <button onClick={() => handleRemoveIf(blockIndex, ifIndex)}>-</button>
                                         </div>
                                     ))}
                                     <button
@@ -152,7 +191,7 @@ export default function Flows() {
                                     {block.thens.map((selectedThen, thenIndex) => (
                                         <div key={thenIndex} className="flex items-center space-x-4">
                                             {selectedThen.type === 'if' &&
-                                                <div>
+                                                <div className="flex items-center space-x-4">
                                                     <div>if:</div>
                                                     {jsonData &&
                                                         <select style={{color: 'black'}} value={selectedThen.option}
@@ -172,10 +211,12 @@ export default function Flows() {
                                                             ))}
                                                         </select>
                                                     }
+                                                    <button onClick={() => handleRemoveThen(blockIndex, thenIndex)}>-
+                                                    </button>
                                                 </div>
                                             }
                                             {selectedThen.type === 'action' &&
-                                                <div>
+                                                <div className="flex items-center space-x-4">
                                                     <div>action:</div>
                                                     {jsonData &&
                                                         <select style={{color: 'black'}} value={selectedThen.option}
@@ -186,6 +227,8 @@ export default function Flows() {
                                                             ))}
                                                         </select>
                                                     }
+                                                    <button onClick={() => handleRemoveThen(blockIndex, thenIndex)}>-
+                                                    </button>
                                                 </div>
                                             }
                                         </div>
