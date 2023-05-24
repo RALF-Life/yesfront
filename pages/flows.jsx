@@ -101,24 +101,16 @@ export default function Flows() {
 
     const handleAddThen = (blockIndex, type) => {
         const blocksCopy = [...blocks];
-        if (type === 'action') {
-            if (isLastBlock(blockIndex)) {
-                const exists = blocksCopy[blockIndex].thens.some((then) => then.type === 'action');
-                if (!exists) {
-                    blocksCopy[blockIndex].thens.push({type: type, option: '', subOption: ''});
-                    setBlocks(blocksCopy);
-                }
-            }
+        blocksCopy[blockIndex].thens.push({type: type, option: '', subOption: ''});
+
+        // Always add a new block if the current block is the last block
+        if (isLastBlock(blockIndex)) {
+            setBlocks([...blocksCopy, {
+                ifs: [],
+                thens: [],
+            }]);
         } else {
-            blocksCopy[blockIndex].thens.push({type: type, option: '', subOption: ''});
-            if (isLastBlock(blockIndex)) {
-                setBlocks([...blocksCopy, {
-                    ifs: [],
-                    thens: [],
-                }]);
-            } else {
-                setBlocks(blocksCopy);
-            }
+            setBlocks(blocksCopy);
         }
     };
 
@@ -276,7 +268,7 @@ export default function Flows() {
                                         }
                                     </div>
                                 ))}
-                                {isLastBlock(blockIndex) && !block.thens.find(then => then.type === 'action') &&
+                                {isLastBlock(blockIndex) &&
                                     <div style={{marginLeft: `${blockIndex * 30}px`}}>
                                         <button
                                             style={{
