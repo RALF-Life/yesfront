@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 import signIn from "../firebase/auth/signin";
-import { useRouter } from 'next/navigation'
+import {useRouter} from 'next/navigation'
 import Link from "next/link";
 
 function Page() {
@@ -12,7 +12,7 @@ function Page() {
     const handleForm = async (event) => {
         event.preventDefault()
 
-        const { result, error } = await signIn(email, password);
+        const {result, error} = await signIn(email, password);
 
         if (error) {
             return console.log(error)
@@ -49,13 +49,15 @@ function Page() {
                 <div className="">
                     <form onSubmit={handleForm} className="flex flex-col items-center">
                         <input
-                               onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email" placeholder="example@mail.com"
-                               className="text-footer-color rounded-lg mb-2 w-full h-10 bg-[#0B0B0B] border-2 border-[#404040]"
-                               />
+                            onChange={(e) => setEmail(e.target.value)} required type="email" name="email" id="email"
+                            placeholder="example@mail.com"
+                            className="text-footer-color rounded-lg mb-2 w-full h-10 bg-[#0B0B0B] border-2 border-[#404040]"
+                        />
                         <div className="flex w-auto">
-                            <input onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password" placeholder="password"
+                            <input onChange={(e) => setPassword(e.target.value)} required type="password"
+                                   name="password" id="password" placeholder="password"
                                    className="text-footer-color rounded-lg mr-2 w-full h-10 bg-[#0B0B0B] border-2 border-[#404040]"
-                                   />
+                            />
                             <button type="submit"
                                     className=" text-black font-semibold px-4 py-2 rounded-lg bg-[#50FFD5] h-10">Login
                             </button>
@@ -63,7 +65,7 @@ function Page() {
                     </form>
                 </div>
             </div>
-    </div>
+        </div>
     );
 }
 

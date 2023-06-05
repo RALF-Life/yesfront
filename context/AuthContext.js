@@ -3,7 +3,7 @@ import {
     onAuthStateChanged,
     getAuth,
 } from 'firebase/auth';
-import firebase_app from 'firebase/config';
+import firebase_app from '../firebase/config';
 
 const auth = getAuth(firebase_app);
 
@@ -31,7 +31,7 @@ export const AuthContextProvider = ({
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user }}>
+        <AuthContext.Provider value={{user}}>
             {loading ? <div>Loading...</div> : children}
         </AuthContext.Provider>
     );
