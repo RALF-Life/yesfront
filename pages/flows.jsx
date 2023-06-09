@@ -2,14 +2,16 @@ import Head from 'next/head'
 import Link from 'next/link'
 import React, {useState, useEffect} from 'react';
 import {useAuthContext} from "../context/AuthContext";
-import {useRouter} from "next/navigation";
+import {useRouter} from "next/router";
+import {getAuth, signOut} from "firebase/auth";
 
 export default function Flows() {
     // JSON data
     const [jsonData, setJsonData] = useState(null);
 
-    // Selected options
+    // Selected options for 'if' and 'then'
     const [selectedOptions, setSelectedOptions] = useState([{option: '', subOption: ''}]);
+    const [selectedThenOptions, setSelectedThenOptions] = useState([{option: '', subOption: '', action: ''}]);
 
     // Get JSON data on component mount
     useEffect(() => {
@@ -19,19 +21,21 @@ export default function Flows() {
             .catch((error) => console.error('Error:', error));
     }, []);
 
-    const handleOptionChange = (index, level, value) => {
-        const optionsCopy = [...selectedOptions];
+    const handleOptionChange = (index, level, value, options, optionsStateSetter) => {
+        const optionsCopy = [...options];
         if (level === 1) {
             optionsCopy[index].option = value;
             optionsCopy[index].subOption = '';  // Reset sub option whenever main option changes
         } else if (level === 2) {
             optionsCopy[index].subOption = value;
+        } else if (level === 3) {
+            optionsCopy[index].action = value;
         }
-        setSelectedOptions(optionsCopy);
+        optionsStateSetter(optionsCopy);
     };
 
-    const handleAddIf = () => {
-        setSelectedOptions([...selectedOptions, {option: '', subOption: ''}]);
+    const handleAddIf = (optionsStateSetter) => {
+        optionsStateSetter(prev => [...prev, {option: '', subOption: '', action: ''}]);
     };
 
     const {user} = useAuthContext()
@@ -40,6 +44,13 @@ export default function Flows() {
     React.useEffect(() => {
         if (user == null) router.push("/")
     }, [user])
+
+    const handleLogout = () => {
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            router.push("/")
+        });
+    }
     return (
         <div className="h-screen">
             <Head>
@@ -56,8 +67,9 @@ export default function Flows() {
                     <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
                 </div>
                 <div className="ml-auto flex items-center mr-10">
-                    <Link href="/signup" className="bg-white rounded-lg px-5 py-1 font-semibold text-center">Sign
-                        Up</Link>
+                    <button onClick={handleLogout}
+                            className="bg-white rounded-lg px-5 py-1 font-semibold text-center">{user?.email}
+                    </button>
                 </div>
             </div>
 
@@ -77,7 +89,7 @@ export default function Flows() {
                                         <div>if:</div>
                                         {jsonData &&
                                             <select style={{color: 'black'}} value={selectedOption.option}
-                                                    onChange={event => handleOptionChange(index, 1, event.target.value)}>
+                                                    onChange={event => handleOptionChange(index, 1, event.target.value, selectedOptions, setSelectedOptions)}>
                                                 <option value="">Select an option...</option>
                                                 {Object.keys(jsonData.$if).map(key => (
                                                     <option key={key} value={key}>{key}</option>
@@ -86,7 +98,7 @@ export default function Flows() {
                                         }
                                         {jsonData && selectedOption.option &&
                                             <select style={{color: 'black'}} value={selectedOption.subOption}
-                                                    onChange={event => handleOptionChange(index, 2, event.target.value)}>
+                                                    onChange={event => handleOptionChange(index, 2, event.target.value, selectedOptions, setSelectedOptions)}>
                                                 <option value="">Select an option...</option>
                                                 {Object.keys(jsonData.$if[selectedOption.option]).map(key => (
                                                     <option key={key} value={key}>{key}</option>
@@ -95,19 +107,77 @@ export default function Flows() {
                                         }
                                     </div>
                                 ))}
+                                <button
+                                    style={{
+                                        backgroundColor: 'black',
+                                        borderRadius: '50%',
+                                        color: 'white',
+                                        padding: '10px'
+                                    }}
+                                    onClick={() => handleAddIf(setSelectedOptions)}>+
+                                </button>
+                                <hr style={{borderColor: 'gray'}}/>
+                                <div className="mt-4">then:</div>
+
+                                {selectedThenOptions.map((selectedOption, index) => (
+                                    <div key={index} className="flex items-center space-x-4">
+                                        <div>if:</div>
+                                        {jsonData &&
+                                            <select style={{color: 'black'}} value={selectedOption.option}
+                                                    onChange={event => handleOptionChange(index, 1, event.target.value, selectedThenOptions, setSelectedThenOptions)}>
+                                                <option value="">Select an option...</option>
+                                                {Object.keys(jsonData.$if).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                        {jsonData && selectedOption.option &&
+                                            <select style={{color: 'black'}} value={selectedOption.subOption}
+                                                    oonClick={() => handleOptionChange(selectedThenOptions.length - 1, 3, 'action', setSelectedThenOptions, selectedThenOptions)}
+                                                    nClick={() => handleOptionChange(selectedThenOptions.length - 1, 3, 'action', setSelectedThenOptions, selectedThenOptions)}>
+                                                <option value="">Select an option...</option>
+                                                {Object.keys(jsonData.$if[selectedOption.option]).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                        {selectedOption.action &&
+                                            <select style={{color: 'black'}} value={selectedOption.action}
+                                                    onChange={event => handleOptionChange(index, 2, event.target.value, selectedThenOptions, setSelectedThenOptions)}>
+                                                <option value="">Select an action...</option>
+                                                {Object.keys(jsonData.$actions).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                    </div>
+                                ))}
+                                {!selectedThenOptions[selectedThenOptions.length - 1].action &&
+                                    <button
+                                        style={{
+                                            backgroundColor: 'black',
+                                            borderRadius: '50%',
+                                            color: 'white',
+                                            padding: '10px'
+                                        }}
+                                        onClick={() => handleAddIf(setSelectedThenOptions)}>Add If
+                                    </button>
+                                }
+                                {!selectedThenOptions[selectedThenOptions.length - 1].action &&
+                                    <button
+                                        style={{
+                                            backgroundColor: 'black',
+                                            borderRadius: '50%',
+                                            color: 'white',
+                                            padding: '10px'
+                                        }}
+
+                                        onClick={() => handleOptionChange(selectedThenOptions.length - 1, 3, 'action', setSelectedThenOptions)}>Add
+                                        Action
+                                    </button>
+                                }
                             </div>
-                            <button
-                                style={{
-                                    backgroundColor: 'black',
-                                    borderRadius: '50%',
-                                    color: 'white',
-                                    padding: '10px'
-                                }}
-                                onClick={handleAddIf}>+
-                            </button>
                         </div>
-                        <hr style={{borderColor: 'gray'}}/>
-                        <div className="mt-4">then:</div>
                     </div>
                 </div>
             </div>
