@@ -11,6 +11,9 @@ export default function Flows() {
     const [selectedIfOptions, setSelectedIfOptions] = useState([{option: '', subOption: ''}]);
     const [selectedThenIfOptions, setSelectedThenIfOptions] = useState([{option: '', subOption: ''}]);
     const [selectedThenActionOptions, setSelectedThenActionOptions] = useState([{action: ''}]);
+    const [selectedElseIfOptions, setSelectedElseIfOptions] = useState([{option: '', subOption: ''}]);
+    const [selectedElseActionOptions, setSelectedElseActionOptions] = useState([{action: ''}]);
+    const [inputValues, setInputValues] = useState({});  // new state for input values
 
     // Get JSON data on component mount
     useEffect(() => {
@@ -29,6 +32,16 @@ export default function Flows() {
             optionsCopy[index].option = value;
             optionsCopy[index].subOption = '';
         } else if (level === 2) {
+            if (level === 2) {
+                const returnType = jsonData.$if[optionsCopy[index].option][value].returns;
+                if (returnType === 'string') {
+                    setInputValues(prevState => ({...prevState, [`${index}_${value}`]: ''}));
+                } else {
+                    const newInputValues = {...inputValues};
+                    delete newInputValues[`${index}_${value}`];
+                    setInputValues(newInputValues);
+                }
+            }
             optionsCopy[index].subOption = value;
         } else if (level === 3) {
             optionsCopy[index].action = value;
@@ -40,6 +53,9 @@ export default function Flows() {
         setSelectedIfOptions(prev => [...prev, {option: '', subOption: ''}]);
     };
 
+    const handleInputChange = (event, index, option) => {
+        setInputValues(prevState => ({...prevState, [`${index}_${option}`]: event.target.value}));
+    };
     const {user} = useAuthContext()
     const router = useRouter()
 
@@ -107,6 +123,15 @@ export default function Flows() {
                                                 ))}
                                             </select>
                                         }
+                                        {jsonData && selectedOption.option && selectedOption.subOption &&
+                                            jsonData.$if[selectedOption.option][selectedOption.subOption].returns === 'string' &&
+                                            <input
+                                                type="text"
+                                                style={{color: 'black'}}
+                                                value={inputValues[`${index}_${selectedOption.subOption}`] || ''}
+                                                onChange={event => handleInputChange(event, index, selectedOption.subOption)}
+                                            />
+                                        }
                                     </div>
                                 ))}
                                 <button
@@ -172,6 +197,7 @@ export default function Flows() {
                                     }])} // Adds a new "if" dropdown to the "then" section
                                 >Add If
                                 </button>
+                                {/*
                                 <button
                                     style={{
                                         backgroundColor: 'black',
@@ -182,6 +208,71 @@ export default function Flows() {
                                     onClick={() => setSelectedThenActionOptions(prev => [...prev, {action: ''}])} // Adds a new "action" dropdown to the "then" section
                                 >Add Action
                                 </button>
+                                */}
+                                <hr style={{borderColor: 'gray', width: '100%'}}/>
+                                <div className="mt-4">else:</div>
+                                {selectedElseIfOptions.map((selectedOption, index) => (
+                                    <div key={index} className="flex items-center space-x-4">
+                                        <div>if:</div>
+                                        {jsonData &&
+                                            <select style={{color: 'black'}} value={selectedOption.option}
+                                                    onChange={event => handleOptionChange(index, 1, event.target.value, selectedElseIfOptions, setSelectedElseIfOptions)}>
+                                                <option value="">Select an option...</option>
+                                                {Object.keys(jsonData.$if).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                        {jsonData && selectedOption.option &&
+                                            <select style={{color: 'black'}} value={selectedOption.subOption}
+                                                    onChange={event => handleOptionChange(index, 2, event.target.value, selectedElseIfOptions, setSelectedElseIfOptions)}>
+                                                <option value="">Select an option...</option>
+                                                {Object.keys(jsonData.$if[selectedOption.option]).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                    </div>
+                                ))}
+                                {selectedElseActionOptions.map((selectedOption, index) => (
+                                    <div key={index} className="flex items-center space-x-4">
+                                        <div>Action:</div>
+                                        {jsonData &&
+                                            <select style={{color: 'black'}} value={selectedOption.action}
+                                                    onChange={event => handleOptionChange(index, 3, event.target.value, selectedElseActionOptions, setSelectedElseActionOptions)}>
+                                                <option value="">Select an action...</option>
+                                                {Object.keys(jsonData.$actions).map(key => (
+                                                    <option key={key} value={key}>{key}</option>
+                                                ))}
+                                            </select>
+                                        }
+                                    </div>
+                                ))}
+                                <button
+                                    style={{
+                                        backgroundColor: 'black',
+                                        borderRadius: '50%',
+                                        color: 'white',
+                                        padding: '10px'
+                                    }}
+                                    onClick={() => setSelectedElseIfOptions(prev => [...prev, {
+                                        option: '',
+                                        subOption: ''
+                                    }])} // Adds a new "if" dropdown to the "else" section
+                                >Add If
+                                </button>
+                                {/*
+                                <button
+                                    style={{
+                                        backgroundColor: 'black',
+                                        borderRadius: '50%',
+                                        color: 'white',
+                                        padding: '10px'
+                                    }}
+                                    onClick={() => setSelectedElseActionOptions(prev => [...prev, {action: ''}])} // Adds a new "action" dropdown to the "else" section
+                                >Add Action
+                                </button>
+                               */}
                             </div>
                         </div>
                     </div>
