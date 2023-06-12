@@ -14,6 +14,8 @@ export default function Flows() {
     const [selectedElseIfOptions, setSelectedElseIfOptions] = useState([{option: '', subOption: ''}]);
     const [selectedElseActionOptions, setSelectedElseActionOptions] = useState([{action: ''}]);
     const [inputValues, setInputValues] = useState({});  // new state for input values
+    const [title, setTitle] = useState("Test Flow");
+
 
     // Get JSON data on component mount
     useEffect(() => {
@@ -23,6 +25,25 @@ export default function Flows() {
             .catch((error) => console.error('Error:', error));
     }, []);
 
+    const saveToJson = () => {
+        let currentData = {
+            "if": selectedIfOptions.map((opt, index) => `${opt.option} ${opt.subOption} '${inputValues[`${index}_${opt.subOption}`] || ''}'`),
+            "then": [
+                {
+                    "if": selectedThenIfOptions.map((opt, index) => `${opt.option} ${opt.subOption}`),
+                    "action": selectedThenActionOptions.map(opt => opt.action)
+                }
+            ],
+            "else": [
+                {
+                    "if": selectedElseIfOptions.map((opt, index) => `${opt.option} ${opt.subOption}`),
+                    "action": selectedElseActionOptions.map(opt => opt.action)
+                }
+            ] // You'll need to define what goes here
+        };
+
+        console.log(JSON.stringify([currentData], null, 2)); // Wrapping it in array as per your required structure
+    };
     const handleOptionChange = (index, level, value, options, setOptions) => {
         const optionsCopy = [...options];
         if (!optionsCopy[index]) {
@@ -103,7 +124,11 @@ export default function Flows() {
                 <div className="h-full flex justify-between items-center text-white pt-20">
                     <div className="w-1/2 ml-8">
                         <div className="flex justify-between items-center mb-2">
-                            <p className="text-white font-bold mb-8 text-4xl">Test Flow</p>
+                            <input
+                                className="text-white font-bold mb-8 text-4xl bg-transparent border-none"
+                                value={title}
+                                onChange={e => setTitle(e.target.value)}
+                            />
                             <button
                                 className=" text-black font-semibold px-4 py-2 rounded-lg bg-[#50FFD5] h-10">Save
                             </button>
@@ -160,7 +185,7 @@ export default function Flows() {
                                         padding: '10px'
                                     }}
                                     onClick={handleAddIf}
-                                >+
+                                >Add Condition
                                 </button>
 
                                 <hr style={{borderColor: 'gray'}}/>
@@ -233,7 +258,7 @@ export default function Flows() {
                                         option: '',
                                         subOption: ''
                                     }])} // Adds a new "if" dropdown to the "then" section
-                                >Add If
+                                >Add Condition
                                 </button>
 
                                 {/*
@@ -317,7 +342,7 @@ export default function Flows() {
                                         option: '',
                                         subOption: ''
                                     }])} // Adds a new "if" dropdown to the "else" section
-                                >Add If
+                                >Add Condition
                                 </button>
                                 {/*
                                 <button
