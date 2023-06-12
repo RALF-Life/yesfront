@@ -20,14 +20,6 @@
       "Location": {
         "parameters": [],
         "returns": "string"
-      },
-      "HasAttendee": {
-        "parameters": [
-          {
-            "mail": "string"
-          }
-        ],
-        "returns": "bool"
       }
     },
     "Date": {

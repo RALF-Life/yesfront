@@ -56,6 +56,14 @@ export default function Flows() {
     const handleInputChange = (event, index, option) => {
         setInputValues(prevState => ({...prevState, [`${index}_${option}`]: event.target.value}));
     };
+
+    const handleRemoveIf = (index, options, setOptions) => {
+        const optionsCopy = [...options];
+        optionsCopy.splice(index, 1);
+        setOptions(optionsCopy);
+    };
+
+
     const {user} = useAuthContext()
     const router = useRouter()
 
@@ -132,6 +140,16 @@ export default function Flows() {
                                                 onChange={event => handleInputChange(event, index, selectedOption.subOption)}
                                             />
                                         }
+                                        <button
+                                            style={{
+                                                backgroundColor: 'black',
+                                                borderRadius: '50%',
+                                                color: 'white',
+                                                padding: '10px'
+                                            }}
+                                            onClick={() => handleRemoveIf(index, selectedIfOptions, setSelectedIfOptions)}
+                                        >-
+                                        </button>
                                     </div>
                                 ))}
                                 <button
@@ -144,6 +162,7 @@ export default function Flows() {
                                     onClick={handleAddIf}
                                 >+
                                 </button>
+
                                 <hr style={{borderColor: 'gray'}}/>
                                 <div className="mt-4">then:</div>
 
@@ -168,6 +187,25 @@ export default function Flows() {
                                                 ))}
                                             </select>
                                         }
+                                        {jsonData && selectedOption.option && selectedOption.subOption &&
+                                            jsonData.$if[selectedOption.option][selectedOption.subOption].returns === 'string' &&
+                                            <input
+                                                type="text"
+                                                style={{color: 'black'}}
+                                                value={inputValues[`${index}_${selectedOption.subOption}`] || ''}
+                                                onChange={event => handleInputChange(event, index, selectedOption.subOption)}
+                                            />
+                                        }
+                                        <button
+                                            style={{
+                                                backgroundColor: 'black',
+                                                borderRadius: '50%',
+                                                color: 'white',
+                                                padding: '10px'
+                                            }}
+                                            onClick={() => handleRemoveIf(index, selectedIfOptions, setSelectedIfOptions)}
+                                        >-
+                                        </button>
                                     </div>
                                 ))}
                                 {selectedThenActionOptions.map((selectedOption, index) => (
@@ -197,6 +235,7 @@ export default function Flows() {
                                     }])} // Adds a new "if" dropdown to the "then" section
                                 >Add If
                                 </button>
+
                                 {/*
                                 <button
                                     style={{
@@ -232,6 +271,25 @@ export default function Flows() {
                                                 ))}
                                             </select>
                                         }
+                                        {jsonData && selectedOption.option && selectedOption.subOption &&
+                                            jsonData.$if[selectedOption.option][selectedOption.subOption].returns === 'string' &&
+                                            <input
+                                                type="text"
+                                                style={{color: 'black'}}
+                                                value={inputValues[`${index}_${selectedOption.subOption}`] || ''}
+                                                onChange={event => handleInputChange(event, index, selectedOption.subOption)}
+                                            />
+                                        }
+                                        <button
+                                            style={{
+                                                backgroundColor: 'black',
+                                                borderRadius: '50%',
+                                                color: 'white',
+                                                padding: '10px'
+                                            }}
+                                            onClick={() => handleRemoveIf(index, selectedIfOptions, setSelectedIfOptions)}
+                                        >-
+                                        </button>
                                     </div>
                                 ))}
                                 {selectedElseActionOptions.map((selectedOption, index) => (
