@@ -45,7 +45,7 @@ function Page() {
                     </div>
 
                     {error && <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-900 dark:text-red-400" role="alert">
-                        <span class="font-medium">Cannot Register:</span> {error}
+                        <span className="font-medium">Cannot Register:</span> {error}
                     </div>}
 
                     <div>
