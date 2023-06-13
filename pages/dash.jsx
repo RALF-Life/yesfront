@@ -57,7 +57,6 @@ export default function Dash() {
                         </div>
                         <div className="ml-auto flex items-center mr-10">
                             <button
-                                onClick={handleLogout}
                                 className="bg-white rounded-lg px-5 py-1 font-semibold text-center">{user?.email}
                             </button>
                         </div>
@@ -69,10 +68,15 @@ export default function Dash() {
                         <span class="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">{user?.displayName || user?.email}</span>&apos;s Dashboard
                     </h1>
                     <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Manage your Flows or Create New!</p>
-                    <a href="#" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                    <Link href="/new/wizard" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
                         Create New Flow
                         <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                    </a>
+                    </Link>
+                    <button
+                        onClick={handleLogout}
+                        href="/new/wizard" class="ml-4 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                        Logout
+                    </button>
                 </div>
 
                 <div className="flex items-center justify-center text-white mt-10">

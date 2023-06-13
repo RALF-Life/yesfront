@@ -35,9 +35,6 @@ function Page() {
                     <Link href="/imprint" className="text-footer-color font-semibold">Imprint</Link>
                     <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
                 </div>
-                <div className="ml-auto flex items-center mr-10">
-                    <Link href="/" className="bg-white rounded-lg px-5 py-1 font-semibold text-center">Login</Link>
-                </div>
             </div>
 
             <div className="w-full flex-col justify-center items-center max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
