@@ -51,11 +51,11 @@ function Page() {
                 </div>
                 <div className="">
                     <form onSubmit={handleForm} className="form flex flex-col items-center">
-                        <input type="email" id="email" placeholder="    Email" name="email"
+                        <input type="email" id="email" placeholder=" Email" name="email"
                                className="text-footer-color rounded-lg mb-2 w-full h-10 bg-[#0B0B0B] border-2 border-[#404040]"
                                onChange={(e) => setEmail(e.target.value)}
                                required/>
-                        <input type="password" id="password" placeholder="    Password" name="password"
+                        <input type="password" id="password" placeholder=" Password" name="password"
                                className="text-footer-color rounded-lg mb-2 w-full h-10 bg-[#0B0B0B] border-2 border-[#404040]"
                                onChange={(e) => setPassword(e.target.value)}
                                required/>
