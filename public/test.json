@@ -1,0 +1,16 @@
+{
+  "if": [
+    "Event.URL() contains 'www.test.com'",
+    "Date.IsMonday()"
+  ],
+  "then": [
+    {
+      "do": "filters/filter-out"
+    }
+  ],
+  "else": [
+    {
+      "do": "filters/filter-in"
+    }
+  ]
+}

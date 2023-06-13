@@ -9,14 +9,60 @@ export default function Flows() {
     // JSON data
     const [jsonData, setJsonData] = useState(null);
     const [selectedIfOptions, setSelectedIfOptions] = useState([{option: '', subOption: ''}]);
-    const [selectedThenIfOptions, setSelectedThenIfOptions] = useState([{option: '', subOption: ''}]);
     const [selectedThenActionOptions, setSelectedThenActionOptions] = useState([{action: ''}]);
-    const [selectedElseIfOptions, setSelectedElseIfOptions] = useState([{option: '', subOption: ''}]);
     const [selectedElseActionOptions, setSelectedElseActionOptions] = useState([{action: ''}]);
     const [inputValues, setInputValues] = useState({});  // new state for input values
     const [title, setTitle] = useState("Test Flow");
+    // New state for the list of JSON files and the selected file
+    const [jsonFiles, setJsonFiles] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
 
+    function parseConditionString(conditionString) {
+        const [option, subOption] = conditionString.split('.');
+        return {option, subOption: subOption.split('()')[0]};
+    }
 
+    // Get the list of JSON files on component mount
+    useEffect(() => {
+        fetch('/test.json')
+            .then((response) => response.json())
+            .then((data) => {
+                setJsonData(data)
+                // Parse the conditions and actions from the JSON data
+                if (data) {
+                    const conditions = data.if.map(conditionString => parseConditionString(conditionString));
+                    console.log("Parsed conditions: ", conditions);
+                    const thenActions = data.then.map(action => ({action: action.do}));
+                    const elseActions = data.else.map(action => ({action: action.do}));
+                    setSelectedIfOptions(conditions);
+                    setSelectedThenActionOptions(thenActions);
+                    setSelectedElseActionOptions(elseActions);
+                }
+            })
+            .catch((error) => console.error('Error:', error));
+    }, []);
+
+    // New function to load a selected JSON file
+    const loadJsonFile = (fileName) => {
+        fetch(`${JSON_FILES_PATH}/${fileName}`)
+            .then((response) => response.json())
+            .then((data) => {
+                // Assuming that your JSON data has the same structure as your form
+                setSelectedIfOptions(data.if.map((condition) => ({
+                    option: condition.option,
+                    subOption: condition.subOption
+                })));
+                setSelectedThenActionOptions([{action: data.then[0].do}]);
+                setSelectedElseActionOptions([{action: data.else[0].do}]);
+            })
+            .catch((error) => console.error('Error:', error));
+    };
+
+    // New function to handle file selection
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.value);
+        loadJsonFile(event.target.value);
+    };
     // Get JSON data on component mount
     useEffect(() => {
         fetch('/spec.json')
@@ -47,7 +93,22 @@ export default function Flows() {
             ]
         };
 
-        console.log(JSON.stringify([currentData], null, 2)); // Wrapping it in array as per your required structure
+        let jsonData = JSON.stringify([currentData], null, 2);
+
+        // Send a POST request to your backend
+        fetch('https://your-backend-url', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: jsonData
+        }).then(response => {
+            if (response.ok) {
+                console.log('Success:', response);
+            } else {
+                console.error('Error:', response);
+            }
+        }).catch((error) => console.error('Error:', error));
     };
     const handleOptionChange = (index, level, value, options, setOptions) => {
         const optionsCopy = [...options];
@@ -148,28 +209,35 @@ export default function Flows() {
                                             <select style={{color: 'black'}} value={selectedOption.option}
                                                     onChange={event => handleOptionChange(index, 1, event.target.value, selectedIfOptions, setSelectedIfOptions)}>
                                                 <option value="">Select an option...</option>
-                                                {Object.keys(jsonData.$if).map(key => (
+                                                {jsonData?.$if && Object.keys(jsonData.$if).map(key => (
                                                     <option key={key} value={key}>{key}</option>
                                                 ))}
                                             </select>
                                         }
-                                        {jsonData && selectedOption.option &&
+                                        {jsonData && jsonData.$if && selectedOption.option && jsonData.$if.hasOwnProperty(selectedOption.option) &&
                                             <select style={{color: 'black'}} value={selectedOption.subOption}
                                                     onChange={event => handleOptionChange(index, 2, event.target.value, selectedIfOptions, setSelectedIfOptions)}>
                                                 <option value="">Select an option...</option>
-                                                {Object.keys(jsonData.$if[selectedOption.option]).map(key => (
-                                                    <option key={key} value={key}>{key}</option>
+                                                {Object.keys(jsonData.$if[selectedOption.option]).map((optionKey, i) => (
+                                                    <option key={i} value={optionKey}>{optionKey}</option>
                                                 ))}
                                             </select>
                                         }
-                                        {jsonData && selectedOption.option && selectedOption.subOption &&
-                                            jsonData.$if[selectedOption.option][selectedOption.subOption].returns === 'string' &&
-                                            <input
-                                                type="text"
-                                                style={{color: 'black'}}
-                                                value={inputValues[`${index}_${selectedOption.subOption}`] || ''}
-                                                onChange={event => handleInputChange(event, index, selectedOption.subOption)}
-                                            />
+                                        {
+                                            jsonData &&
+                                            selectedOption.option &&
+                                            selectedOption.subOption &&
+                                            jsonData.$if &&
+                                            jsonData.$if[selectedOption.option] &&
+                                            jsonData.$if[selectedOption.option][selectedOption.subOption] &&
+                                            jsonData.$if[selectedOption.option][selectedOption.subOption].returns === 'string' && (
+                                                <input
+                                                    type="text"
+                                                    style={{color: 'black'}}
+                                                    value={inputValues[`${index}_${selectedOption.subOption}`] || ''}
+                                                    onChange={event => handleInputChange(event, index, selectedOption.subOption)}
+                                                />
+                                            )
                                         }
                                         <button
                                             style={{
@@ -204,7 +272,7 @@ export default function Flows() {
                                             <select style={{color: 'black'}} value={selectedOption.action}
                                                     onChange={event => handleOptionChange(index, 3, event.target.value, selectedThenActionOptions, setSelectedThenActionOptions)}>
                                                 <option value="">Select an action...</option>
-                                                {Object.keys(jsonData.$actions).map(key => (
+                                                {jsonData?.$actions && Object.keys(jsonData.$actions).map(key => (
                                                     <option key={key} value={key}>{key}</option>
                                                 ))}
                                             </select>
@@ -220,7 +288,7 @@ export default function Flows() {
                                             <select style={{color: 'black'}} value={selectedOption.action}
                                                     onChange={event => handleOptionChange(index, 3, event.target.value, selectedElseActionOptions, setSelectedElseActionOptions)}>
                                                 <option value="">Select an action...</option>
-                                                {Object.keys(jsonData.$actions).map(key => (
+                                                {jsonData?.$actions && Object.keys(jsonData.$actions).map(key => (
                                                     <option key={key} value={key}>{key}</option>
                                                 ))}
                                             </select>
