@@ -5,6 +5,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { useRouter } from "next/router";
 import Flow from '../components/Flow';
 import { ETBaseURL } from '../components/Var';
+import { getAuth, signOut } from 'firebase/auth';
 
 export default function Dash() {
     const [flows, setFlows] = useState([]);
@@ -32,18 +33,59 @@ export default function Dash() {
         })
     }, []);
 
+    function handleLogout() {
+        const auth = getAuth()
+        signOut(auth).then(() => router.push("/"))
+    }
+
     return (
-        <div className="h-screen flex justify-between items-center text-white pt-20">
-            <ul className='w-full'>
-                {flows.length > 0
-                    ? flows.map((flow, index) => (
-                        <li key={index} className='mb-4'>
-                            <Flow flow={flow} token={token} />
-                        </li>
-                    ))
-                    : <span className='text-red-400'>No flow found</span>
-                }
-            </ul>
-        </div>
+        <>
+            <div className="h-screen">
+                <div className='mb-10'>
+                    <Head>
+                        <title>Ralf</title>
+                        <meta name="description" content="RALF Flow creation" />
+                        <link rel="icon" href="/favicon.ico" />
+                    </Head>
+
+                    <div id="top-navigation" className="ml-5 mt-3 flex items-center">
+                        <p id="logo"
+                            className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">RALF</p>
+                        <div className="flex space-x-6 items-center">
+                            <Link href="/imprint" className="text-footer-color font-semibold">Imprint</Link>
+                            <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
+                        </div>
+                        <div className="ml-auto flex items-center mr-10">
+                            <button
+                                onClick={handleLogout}
+                                className="bg-white rounded-lg px-5 py-1 font-semibold text-center">{user?.email}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='w-screen text-center'>
+                    <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+                        <span class="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">{user?.displayName || user?.email}</span>&apos;s Dashboard
+                    </h1>
+                    <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Manage your Flows or Create New!</p>
+                    <a href="#" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                        Create New Flow
+                        <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </a>
+                </div>
+
+                <div className="flex items-center justify-center text-white mt-10">
+                    {flows.length > 0
+                        ? flows.map((flow, index) => (
+                            <div key={index} className='mr-4'>
+                                <Flow flow={flow} token={token} />
+                            </div>
+                        ))
+                        : <span className='text-red-400'>No flow found</span>
+                    }
+                </div>
+            </div>
+        </>
     )
 }

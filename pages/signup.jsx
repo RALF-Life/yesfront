@@ -52,7 +52,7 @@ function Page() {
                     </div>}
 
                     <div>
-                        <label for="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                         <input
                             onChange={(e) => setEmail(e.target.value)}
                             type="email"
@@ -63,7 +63,7 @@ function Page() {
                             required />
                     </div>
                     <div>
-                        <label for="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
+                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
                         <input
                             onChange={(e) => setPassword(e.target.value)}
                             type="password"
