@@ -20,7 +20,7 @@ function Page() {
 
         // else successful
         console.log(result)
-        return router.push("/flows")
+        return router.push("/dash")
     }
     return (
 

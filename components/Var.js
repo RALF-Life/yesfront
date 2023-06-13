@@ -1,0 +1,1 @@
+export const ETBaseURL = "https://et.ralf.life"
