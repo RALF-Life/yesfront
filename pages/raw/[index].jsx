@@ -2,16 +2,14 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { ETBaseURL } from "../../components/Var";
-import Head from "next/head";
-import Link from "next/link";
-import { getAuth, signOut } from "firebase/auth";
+import NavBar from "../../components/NavBar";
+import Editor from '@monaco-editor/react';
 
 function Tree({ val }) {
     const tags = {
         'update': <span className="ml-3 bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Update</span>,
         'execute': <span className="ml-3 bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Execute</span>,
     }
-    console.log(val)
     return <li className="mb-10 ml-4">
         <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
         <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{val.timestamp}</time>
@@ -65,6 +63,7 @@ export default function Raw() {
                     setSource(data['source'])
                     setContent(JSON.stringify(data['flows'], null, 4))
                 })
+                .catch(() => { })
         })
 
         const interval = setInterval(updateLog, 2000)
@@ -94,6 +93,7 @@ export default function Raw() {
                         })
                     }
                 })
+                .catch(() => { })
         })
     }
 
@@ -111,20 +111,21 @@ export default function Raw() {
                     setHistory(data)
                     setLoading(false)
                 })
+                .catch(() => { })
         })
     }
 
     function reset() {
-        setContent(JSON.stringify(flow['flows'], null, 4))
+        onUpdate(JSON.stringify(flow['flows'], null, 4))
     }
 
     function onUpdate(e) {
         setSaved(false)
-        setContent(e.target.value)
+        setContent(e)
 
         // try to parse JSON
         try {
-            JSON.parse(e.target.value)
+            JSON.parse(e)
             setError('')
         } catch (e) {
             setError(e.toString())
@@ -133,30 +134,10 @@ export default function Raw() {
 
     return <>
         <div className="h-screen">
-            <div className="mb-10">
-                <Head>
-                    <title>Ralf</title>
-                    <meta name="description" content="RALF Flow creation" />
-                    <link rel="icon" href="/favicon.ico" />
-                </Head>
-
-                <div id="top-navigation" className="ml-5 mt-3 flex items-center">
-                    <p id="logo"
-                        className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">RALF</p>
-                    <div className="flex space-x-6 items-center">
-                        <Link href="/imprint" className="text-footer-color font-semibold">Imprint</Link>
-                        <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
-                    </div>
-                    <div className="ml-auto flex items-center mr-10">
-                        <Link href="/dash"
-                            className="bg-white rounded-lg px-5 py-1 font-semibold text-center">{user?.email}
-                        </Link>
-                    </div>
-                </div>
-            </div>
+            <NavBar />
 
             <div className="mx-8 flex flex-row justify-between">
-                <div className="w-full">
+                <div className="w-4/5">
                     <div className="mb-4">
                         <label
                             htmlFor="helper-text"
@@ -190,19 +171,17 @@ export default function Raw() {
                                     <span>Reset</span>
                                 </button>
                             </div>
-                            <div className="px-4 py-2 bg-white dark:bg-gray-800">
+                            <div className="px-4 py-2 bg-[#1E1E1E] dark:bg-[#1E1E1E]">
                                 <label htmlFor="editor" className="sr-only">Publish post</label>
-                                <textarea
-                                    id="editor"
-                                    rows="30"
-                                    className="block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
-                                    placeholder="[ ]"
+                                <Editor
+                                    height="45vh"
+                                    defaultLanguage="json"
+                                    theme="vs-dark"
                                     value={content}
-                                    onChange={onUpdate}
-                                    required></textarea>
+                                    onChange={onUpdate} />
                             </div>
                             <div className="flex items-center justify-between px-3 py-2 rounded-b-lg  dark:border-gray-600">
-                                <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600">
+                                <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600 mb-1">
                                     {error
                                         ? <div id="alert-additional-content-2" className="text-red-800 dark:text-red-400" role="alert">
                                             <div className="flex items-center">
@@ -215,7 +194,7 @@ export default function Raw() {
                                             </div>
                                         </div>
                                         : <div id="alert-additional-content-3" className="text-green-800 dark:text-green-400 dark:border-green-800" role="alert">
-                                            <div className="flex items-center mt-2 mb-4">
+                                            <div className="flex items-center mt-2">
                                                 <svg aria-hidden="true" className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                                                 <span className="sr-only">Info</span>
                                                 <h3 className="text-lg font-medium">JSON is valid</h3>
@@ -235,9 +214,8 @@ export default function Raw() {
                         </div>
                     </form>
                 </div>
+
                 <div className="ml-8">
-
-
                     <ul className="max-w-md space-y-2 text-gray-500 list-inside dark:text-gray-400">
                         {loading
                             ? <li className="flex items-center">

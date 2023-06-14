@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import signUp from "../firebase/auth/signup";
 import { useRouter } from 'next/navigation'
 import Link from "next/link";
-import Head from "next/head";
+import NavBar from "../components/NavBar";
 
 function Page() {
     const [email, setEmail] = React.useState('')
@@ -23,19 +23,7 @@ function Page() {
     }
     return (
         <div className="bg-black h-screen flex justify-center items-center">
-            <Head>
-                <title>Ralf</title>
-                <meta name="description" content="RALF Landing page" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <div id="top-navigation" className="ml-5 mt-3 flex items-center absolute top-0 left-0 right-0">
-                <p id="logo"
-                    className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">RALF</p>
-                <div className="flex space-x-6 items-center">
-                    <Link href="/imprint" className="text-footer-color font-semibold">Imprint</Link>
-                    <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
-                </div>
-            </div>
+            <NavBar />
 
             <div className="w-full flex-col justify-center items-center max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
                 <form className="space-y-6" action="#" onSubmit={handleForm}>
