@@ -1,10 +1,19 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import signIn from "../firebase/auth/signin";
 import { useRouter } from 'next/navigation'
 import Link from "next/link";
+import { useAuthContext } from "../context/AuthContext";
 
 function Page() {
+    // redirect user to dashboard if already logged in
+    const { user } = useAuthContext()
+    useEffect(() => {
+        if (user) {
+            router.push("/dash")
+        }
+    }, [])
+
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [error, setError] = useState('')

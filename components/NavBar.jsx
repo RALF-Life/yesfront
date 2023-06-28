@@ -38,10 +38,12 @@ export default function NavBar() {
         </Head>
 
         <div id="top-navigation" className="ml-5 mt-3 flex items-center">
-            <p id="logo"
-                className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">
-                RALF
-            </p>
+            <Link href="/">
+                <p id="logo"
+                    className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">
+                    RALF
+                </p>
+            </Link>
             <div className="flex space-x-6 items-center">
                 {info
                     ? <div className="bg-green-400 px-3 py-1 rounded-md">
@@ -55,8 +57,17 @@ export default function NavBar() {
                 <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
             </div>
             <div className="ml-auto flex items-center mr-10">
-                <Link href="/dash"
-                    className="bg-white rounded-lg px-5 py-1 font-semibold text-center">{user?.email}
+                <Link href="/dash" className="bg-slate-700 text-slate-100 rounded-lg px-3 py-2 text-center">
+                    <div className="flex flex-row justify-center items-center ">
+                        <img
+                            className="h-6 mr-2 rounded-full"
+                            alt="Avatar"
+                            src={`https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${btoa(user?.email)}`}
+                        />
+                        <span>
+                            {user?.email}
+                        </span>
+                    </div>
                 </Link>
             </div>
         </div>
