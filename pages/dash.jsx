@@ -8,29 +8,34 @@ import { getAuth, signOut } from 'firebase/auth';
 import NavBar from '../components/NavBar';
 
 export default function Dash() {
-    const [flows, setFlows] = useState([]);
-    const [token, setToken] = useState(null);
+    const [flows, setFlows] = useState([])
+    const [token, setToken] = useState(null)
 
     const { user } = useAuthContext()
     const router = useRouter()
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (user == null) {
             router.push("/")
             return
         }
 
+        const controller = new AbortController()
         user.getIdToken().then((token) => {
             setToken(token)
 
             fetch(ETBaseURL + '/flows', {
+                signal: controller.signal,
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
             })
                 .then((response) => response.json())
                 .then((data) => setFlows(data || []))
+                .catch((err) => console.error(err))
         })
+
+        return () => controller.abort()
     }, []);
 
     function handleLogout() {
@@ -50,7 +55,7 @@ export default function Dash() {
                     <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Manage your Flows or Create New!</p>
                     <Link href="/new/wizard" className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
                         Create New Flow
-                        <svg className="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <svg className="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                     </Link>
                     <button
                         onClick={handleLogout}

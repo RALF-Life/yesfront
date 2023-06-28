@@ -9,21 +9,30 @@ export default function NavBar() {
     const [info, setInfo] = useState({})
 
     useEffect(() => {
+        const controller = new AbortController()
         const interval = setInterval(() => {
-            fetch(ETBaseURL + "/icanhazralf").then((response) => {
-                if (response.ok) {
-                    response.json().then((data) => setInfo(data))
-                } else {
-                    setInfo({})
-                }
-            }).catch(() => setInfo(null))
+            fetch(ETBaseURL + "/icanhazralf", { signal: controller.signal })
+                .then((response) => {
+                    if (response.ok) {
+                        response.json().then((data) => setInfo(data))
+                    } else {
+                        setInfo({})
+                    }
+                })
+                .catch((err) => {
+                    setInfo(null)
+                    console.error(err)
+                })
         }, 1000)
-        return () => clearInterval(interval)
+        return () => {
+            clearInterval(interval)
+            controller.abort()
+        }
     }, [])
 
     return <div className="mb-10">
         <Head>
-            <title>Ralf</title>
+            <title>RALF</title>
             <meta name="description" content="RALF Flow creation" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
