@@ -31,7 +31,7 @@ function Page() {
     }
 
     return (
-        <div className="bg-black h-screen flex justify-center items-center">
+        <div className="flex justify-center items-center">
             <div id="top-navigation" className="ml-5 mt-3 flex items-center absolute top-0 left-0 right-0">
                 <p id="logo"
                     className="mr-6 font-black bg-cover text-4xl text-transparent bg-clip-text bg-gradient-to-r from-RALF-gradient-start to-RALF-gradient-end">RALF</p>

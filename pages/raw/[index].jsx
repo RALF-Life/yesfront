@@ -158,17 +158,18 @@ export default function Raw() {
                             type="email"
                             id="helper-text"
                             aria-describedby="helper-text-explanation"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="https://rapla.dhbw.de/abdefgh.ics" />
                         <p id="helper-text-explanation" className="mt-2 text-sm text-gray-500 dark:text-gray-400">Please enter a <span className="text-green-400">valid</span> .ics URL</p>
                     </div>
 
                     <form>
-                        <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                        <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                             <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
                                 <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600">
                                     <div className="flex items-center space-x-1 sm:pr-4">
-                                        {flow && <h1 className="text-white">Editing <span className="font-semibold">{flow['name']}</span> <span className="bg-slate-600 p-2 rounded-sm">{flow['flow-id']}</span> in JSON mode</h1>}
+                                        {flow && 
+                                            <h1 className="text-white">Editing <span className="font-semibold">{flow['name']}</span> <span className="bg-slate-600 p-2 rounded-sm">{flow['flow-id']}</span> in JSON mode</h1>}
                                     </div>
                                 </div>
                                 <button
@@ -206,12 +207,10 @@ export default function Raw() {
                                                 <svg aria-hidden="true" className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
                                                 <span className="sr-only">Info</span>
                                                 <h3 className="text-lg font-medium">JSON is valid</h3>
-                                            </div>
-                                            <div className="flex">
                                                 <button
                                                     onClick={save}
                                                     type="button"
-                                                    className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                                    className="ml-2 text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                                                     <svg aria-hidden="true" className="-ml-0.5 mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"></path></svg>
                                                     {saved ? 'Saved!' : 'Save Flow'}
                                                 </button>

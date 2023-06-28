@@ -8,8 +8,8 @@ export default function imprint() {
 
             <div className="font-inter text-[20px] text-footer-color">
 
-                <div className="ml-24 mr-24 sm:ml-8 mr-8">
-                    <p className="text-website-50 mt-20">Please don&apos;t sue us</p>
+                <div className="ml-24 mr-24 sm:ml-8">
+                    <p className="text-website-50 mt-20">Please <span className="bg-red-400 p-1 text-white font-semibold">do not</span> sue us 🙏</p>
                     <p className="text-[48px] text-white font-bold">Imprint
                     </p>
                     <div className="text-footer-color">
@@ -18,11 +18,11 @@ export default function imprint() {
                         <p>76646 Bruchsal</p><br />
                         <button
                             className="rounded-md  border-2 border-[#525252] text-[#EFEFEF] p-10 p-10 p-3 p-3 font-semibold text-[15px]">
-                            <a href="mailto:steckplatz.vier09@icloud.com">Send E-Mail</a>
+                            <a href="mailto:steckplatz.vier09@icloud.com">E-Post schreiben</a>
                         </button>
                     </div>
                     <br />
-                    <p><strong>Haftung für Inhalte</strong></p>
+                    <p className="font-bold text-white">Haftung für Inhalte</p>
                     <p>Als Diensteanbieter bin ich gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den
                         allgemeinen
                         Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG bin ich als Diensteanbieter jedoch nicht verpflichtet,
@@ -35,7 +35,7 @@ export default function imprint() {
                         Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von
                         entsprechenden
                         Rechtsverletzungen werde ich diese Inhalte umgehend entfernen.</p><br />
-                    <p><strong>Haftung für Links</strong></p>
+                    <p className="font-bold text-white">Haftung für Links</p>
                     <p>Mein Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss
                         haben. Deshalb
                         kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten
@@ -49,7 +49,7 @@ export default function imprint() {
                         einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige
                         Links
                         umgehend entfernen.</p><br />
-                    <p><strong>Urheberrecht</strong></p>
+                    <p className="font-bold text-white">Urheberrecht</p>
                     <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem
                         deutschen
                         Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb
@@ -65,7 +65,7 @@ export default function imprint() {
                         werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden
                         wir
                         derartige Inhalte umgehend entfernen.</p><br />
-                    <p><strong>Datenschutz</strong></p>
+                    <p className="font-bold text-white">Datenschutz</p>
                     <p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Ich behandle Ihre
                         personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie
                         dieser
