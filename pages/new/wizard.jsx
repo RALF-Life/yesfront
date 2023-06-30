@@ -125,7 +125,7 @@ function FlowCreator({ user, source, setSource }) {
     const [selectedThenActionOptions, setSelectedThenActionOptions] = useState([{ action: '' }]);
     const [selectedElseActionOptions, setSelectedElseActionOptions] = useState([{ action: '' }]);
     const [inputValues, setInputValues] = useState({});  // new state for input values
-    const [title, setTitle] = useState("Test Flow");
+    const [title, setTitle] = useState(`Test Flow (${new Date().toDateString()})`);
     const [error, setError] = useState("");
 
     // Get JSON data on component mount
@@ -243,7 +243,7 @@ function FlowCreator({ user, source, setSource }) {
     return <>
         <div className="flex justify-between items-center mb-8">
             <input
-                className="text-white font-bold text-4xl bg-transparent border-none"
+                className="w-full text-white font-bold text-4xl bg-transparent border-none"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
             />
