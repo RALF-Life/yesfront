@@ -51,6 +51,14 @@ export default function Raw() {
             return
         }
 
+        const removeEmpty = (obj) => {
+            Object.keys(obj).forEach(k =>
+                (obj[k] && typeof obj[k] === 'object') && removeEmpty(obj[k]) ||
+                (obj[k] === null || obj[k] == {}) && delete obj[k]
+            );
+            return obj;
+        };
+
         const controller = new AbortController()
         user.getIdToken().then((token) => {
             fetch(ETBaseURL + '/' + flowID + ".json", {
@@ -61,7 +69,7 @@ export default function Raw() {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    setFlow(data)
+                    setFlow(removeEmpty(data))
                     setSource(data['source'])
                     setContent(JSON.stringify(data['flows'], null, 4))
                 })
@@ -168,7 +176,7 @@ export default function Raw() {
                             <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
                                 <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600">
                                     <div className="flex items-center space-x-1 sm:pr-4">
-                                        {flow && 
+                                        {flow &&
                                             <h1 className="text-white">Editing <span className="font-semibold">{flow['name']}</span> <span className="bg-slate-600 p-2 rounded-sm">{flow['flow-id']}</span> in JSON mode</h1>}
                                     </div>
                                 </div>

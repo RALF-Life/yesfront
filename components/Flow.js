@@ -63,7 +63,7 @@ export default function Flow({ flow, token }) {
     }
 
     return <>
-        <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div className="max-w-sm p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-900 dark:border-slate-800">
             <div className='flex justify-between'>
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                     {flow['name']}
