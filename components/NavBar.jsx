@@ -10,7 +10,8 @@ export default function NavBar() {
 
     useEffect(() => {
         const controller = new AbortController()
-        const interval = setInterval(() => {
+
+        const check = () => {
             fetch(ETBaseURL + "/icanhazralf", { signal: controller.signal })
                 .then((response) => {
                     if (response.ok) {
@@ -23,7 +24,9 @@ export default function NavBar() {
                     setInfo(null)
                     console.error(err)
                 })
-        }, 1000)
+        }
+        check()
+        const interval = setInterval(check, 1000)
         return () => {
             clearInterval(interval)
             controller.abort()
