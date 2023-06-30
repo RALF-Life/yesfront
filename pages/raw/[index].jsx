@@ -5,6 +5,8 @@ import { ETBaseURL } from "../../components/Var";
 import NavBar from "../../components/NavBar";
 import Editor from '@monaco-editor/react';
 
+import YAML from 'yaml'
+
 function Tree({ val }) {
     const tags = {
         'update': <span className="ml-3 bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Update</span>,
@@ -71,7 +73,7 @@ export default function Raw() {
                 .then((data) => {
                     setFlow(removeEmpty(data))
                     setSource(data['source'])
-                    setContent(JSON.stringify(data['flows'], null, 4))
+                    setContent(YAML.stringify(data['flows'], null, 4))
                 })
                 .catch((err) => console.error(err))
         })
@@ -84,7 +86,7 @@ export default function Raw() {
     }, []);
 
     function save() {
-        flow['flows'] = JSON.parse(content)
+        flow['flows'] = YAML.parse(content)
         flow['source'] = source
 
         user.getIdToken().then((token) => {
@@ -142,7 +144,7 @@ export default function Raw() {
 
         // try to parse JSON
         try {
-            setError(linter(JSON.parse(e)))
+            setError(linter(YAML.parse(e)))
         } catch (e) {
             setError(e.toString())
         }
@@ -192,7 +194,7 @@ export default function Raw() {
                                 <label htmlFor="editor" className="sr-only">Publish post</label>
                                 <Editor
                                     height="45vh"
-                                    defaultLanguage="json"
+                                    defaultLanguage="yaml"
                                     theme="vs-dark"
                                     value={content}
                                     onChange={onUpdate} />
