@@ -21,9 +21,9 @@ function Page() {
 
         return router.push("/dash")
     }
-    return (
+    return <>
+        <NavBar />
         <div className="flex justify-center items-center">
-            <NavBar />
 
             <div className="w-full flex-col justify-center items-center max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
                 <form className="space-y-6" action="#" onSubmit={handleForm}>
@@ -65,7 +65,7 @@ function Page() {
                 </form>
             </div>
         </div>
-    );
+    </>
 }
 
 export default Page;
