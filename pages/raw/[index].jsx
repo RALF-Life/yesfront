@@ -179,7 +179,7 @@ export default function Raw() {
                                 <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x dark:divide-gray-600">
                                     <div className="flex items-center space-x-1 sm:pr-4">
                                         {flow &&
-                                            <h1 className="text-white">Editing <span className="font-semibold">{flow['name']}</span> <span className="bg-slate-600 p-2 rounded-sm">{flow['flow-id']}</span> in JSON mode</h1>}
+                                            <h1 className="text-white">Editing <span className="font-semibold">{flow['name']}</span> <span className="bg-slate-600 p-2 rounded-sm">{flow['flow-id']}</span> in YAML mode</h1>}
                                     </div>
                                 </div>
                                 <button
