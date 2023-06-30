@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthContext } from "../../context/AuthContext";
 import { useRouter } from "next/router";
 import { ETBaseURL } from '../../components/Var';
@@ -134,7 +134,7 @@ export default function Flows() {
     const { user } = useAuthContext()
     const router = useRouter()
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (user == null) router.push("/")
     }, [])
 

@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import signIn from "../firebase/auth/signin";
 import { useRouter } from 'next/navigation'
 import Link from "next/link";
@@ -15,8 +15,8 @@ function Page() {
         }
     }, [])
 
-    const [email, setEmail] = React.useState('')
-    const [password, setPassword] = React.useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const router = useRouter()
 

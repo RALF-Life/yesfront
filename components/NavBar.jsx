@@ -6,7 +6,7 @@ import { ETBaseURL } from "./Var";
 
 export default function NavBar() {
     const { user } = useAuthContext()
-    const [info, setInfo] = useState({})
+    const [info, setInfo] = useState({ loading: true })
 
     useEffect(() => {
         const controller = new AbortController()
@@ -45,30 +45,41 @@ export default function NavBar() {
                 </p>
             </Link>
             <div className="flex space-x-6 items-center">
-                {info
-                    ? <div className="bg-green-400 px-3 py-1 rounded-md">
-                        Backend: {info?.version} | #{info?.commit?.substring(0, 8)}
+                {info?.loading
+                    ? <div className="bg-orange-400 px-3 py-1 rounded-md">
+                        Backend: Connecting...
                     </div>
-                    : <div className="bg-red-400 px-3 py-1 rounded-md">
-                        Backend unavailable
-                    </div>
+                    : info
+                        ? <div className="bg-green-400 px-3 py-1 rounded-md">
+                            Backend: {info?.version} | #{info?.commit?.substring(0, 8)}
+                        </div>
+                        : <div className="bg-red-400 px-3 py-1 rounded-md">
+                            Backend unavailable
+                        </div>
                 }
                 <Link href="/imprint" className="text-footer-color font-semibold">Imprint</Link>
                 <Link href="https://ralf-p.medium.com/" className="text-footer-color font-semibold">Blog</Link>
             </div>
             <div className="ml-auto flex items-center mr-10">
-                <Link href="/dash" className="bg-slate-700 text-slate-100 rounded-lg px-3 py-2 text-center">
-                    <div className="flex flex-row justify-center items-center ">
-                        <img
-                            className="h-6 mr-2 rounded-full"
-                            alt="Avatar"
-                            src={`https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${btoa(user?.email)}`}
-                        />
-                        <span>
-                            {user?.email}
-                        </span>
-                    </div>
-                </Link>
+                {user
+                    ? <Link href="/dash" className="bg-slate-700 text-slate-100 rounded-lg px-3 py-2 text-center">
+                        <div className="flex flex-row justify-center items-center ">
+                            <img
+                                className="h-6 mr-2 rounded-full"
+                                alt="Avatar"
+                                src={`https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${btoa(user?.email)}`}
+                            />
+                            <span>
+                                {user?.email}
+                            </span>
+                        </div>
+                    </Link>
+                    : <Link href="/" className="bg-blue-700 text-slate-100 rounded-lg px-3 py-2 text-center">
+                        <div className="flex flex-row justify-center items-center ">
+                            Login to RALF 🤩
+                        </div>
+                    </Link>
+                }
             </div>
         </div>
     </div>
